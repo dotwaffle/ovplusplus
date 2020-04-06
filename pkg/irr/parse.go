@@ -44,7 +44,8 @@ func ParseRoutes(data io.Reader) ([]Route, error) {
 			route.Prefix = cidr
 		case "origin:":
 			if route.Prefix == nil {
-				return nil, fmt.Errorf("bad record: %s, line: %d", s.Text(), line)
+				// old irrd servers used to change "route:" to "*xxte:" etc, ugly hack
+				continue
 			}
 			if len(f) != 2 && !(len(f) > 2 && strings.HasPrefix(f[2], "#")) {
 				return nil, fmt.Errorf("bad record: %s, line: %d", route.Prefix.String(), line)
