@@ -1,0 +1,10 @@
+debug: true
+file: []
+rpki: https://rpki.gin.ntt.net/api/export.json
+irrdb:
+  - ftp://ftp.apnic.net/pub/apnic/whois/apnic.db.route.gz
+  - ftp://ftp.apnic.net/pub/apnic/whois/apnic.db.route6.gz
+  - https://ftp.ripe.net/ripe/dbase/split/ripe.db.route.gz
+  - https://ftp.ripe.net/ripe/dbase/split/ripe.db.route6.gz
+  - ftp://rr1.ntt.net/nttcomRR/nttcom.db.gz
+  # - ftp://ftp.radb.net/radb/dbase/radb.db.gz
