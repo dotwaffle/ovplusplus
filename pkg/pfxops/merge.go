@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/dotwaffle/cidranger"
 	"github.com/dotwaffle/ovplusplus/pkg/irr"
 	"github.com/dotwaffle/ovplusplus/pkg/rpki"
-	"github.com/yl2chen/cidranger"
 )
 
 type pfxAsn struct {
@@ -39,14 +39,14 @@ func merge(roas []rpki.ROA, irrdb map[string][]irr.Route, unsafe bool) ([]rpki.R
 			}
 			pfxMap[pfxAsn{prefix: routeStr, asn: route.Origin}] = true
 
-			// does an ROA already cover this prefix, either with a shorter or longer prefix
-			roa, err := pfxTrie.Contains(route.Prefix.IP)
+			// does an ROA already cover this prefix, with a shorter or longer prefix
+			roa, err := pfxTrie.MatchingNetworks(*route.Prefix)
 			if err != nil {
 				return nil, fmt.Errorf("pfxTrie.Contains(): %s: %w", routeStr, err)
 			}
 
 			// no ROA covers this prefix or unsafe mode active
-			if !roa || unsafe {
+			if len(roa) == 0 || unsafe {
 				ones, _ := route.Prefix.Mask.Size()
 				newROA := rpki.ROA{
 					Prefix:    routeStr,
