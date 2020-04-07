@@ -162,7 +162,7 @@ var serveCmd = &cobra.Command{
 			fmt.Fprintf(w, export)
 		}
 		http.HandleFunc("/export.json", httpExport)
-		if err := http.ListenAndServe(":8080", nil); err != nil {
+		if err := http.ListenAndServe(":"+viper.GetString("port"), nil); err != nil {
 			log.Fatal().Err(err).Msg("http.ListenAndServe()")
 		}
 	},
@@ -187,6 +187,12 @@ func init() {
 	serveCmd.Flags().StringP("rpki", "r", "", "url to fetch containing RPKI ROA data")
 	if err := viper.BindPFlag("rpki", serveCmd.Flags().Lookup("rpki")); err != nil {
 		log.Fatal().Err(err).Msg("viper.BindPFlag(): rpki")
+	}
+
+	// http port
+	serveCmd.Flags().StringP("port", "p", "8080", "tcp port for http server")
+	if err := viper.BindPFlag("port", serveCmd.Flags().Lookup("port")); err != nil {
+		log.Fatal().Err(err).Msg("viper.BindPFlag(): port")
 	}
 
 	// refresh interval
