@@ -95,11 +95,32 @@ var mergeCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal().Err(err).Msg("pfxops.Merge()")
 		}
-		sort.SliceStable(results, func(i, j int) bool { return results[i].Prefix < results[j].Prefix })
+		sort.SliceStable(results, func(i, j int) bool {
+			switch {
+			case results[i].ASN < results[j].ASN:
+				return true
+			case results[i].ASN > results[j].ASN:
+				return false
+			case results[i].MaxLength < results[j].MaxLength:
+				return true
+			case results[i].MaxLength > results[j].MaxLength:
+				return false
+			case results[i].Prefix < results[j].Prefix:
+				return true
+			case results[i].Prefix > results[j].Prefix:
+				return false
+			case results[i].TA < results[j].TA:
+				return true
+			case results[i].TA > results[j].TA:
+				return false
+			default:
+				return false
+			}
+		})
 		log.Debug().Int("roas", len(results)).Msg("new total roas")
 
 		// dump the output to stdout
-		output, err := json.Marshal(rpki.Export{ROAs: results})
+		output, err := json.MarshalIndent(rpki.Export{ROAs: results}, "", "\t")
 		if err != nil {
 			log.Fatal().Err(err).Msg("json.Marshal()")
 		}
