@@ -148,11 +148,4 @@ func init() {
 	if err := viper.BindPFlag("rpki", mergeCmd.Flags().Lookup("rpki")); err != nil {
 		log.Fatal().Err(err).Msg("viper.BindPFlag(): rpki")
 	}
-	// mergeCmd.MarkFlagRequired("rpki")
-
-	// use "orlonger" semantics instead of "exact" matching
-	mergeCmd.Flags().BoolP("longer", "l", false, "accept longer prefixes as well")
-	if err := viper.BindPFlag("longer", mergeCmd.Flags().Lookup("longer")); err != nil {
-		log.Fatal().Err(err).Msg("viper.BindPFlag(): longer")
-	}
 }
