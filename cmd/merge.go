@@ -17,7 +17,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// mergeCmd implements the irr command.
+// mergeCmd implements the merge command.
 var mergeCmd = &cobra.Command{
 	Use:   "merge",
 	Short: "Create an export.json file based on IRR and RPKI data.",
