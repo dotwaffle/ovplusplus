@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"sort"
 	"sync"
 
@@ -119,12 +120,18 @@ var mergeCmd = &cobra.Command{
 		})
 		log.Debug().Int("roas", len(results)).Msg("new total roas")
 
-		// dump the output to stdout
+		// dump the output
 		output, err := json.MarshalIndent(rpki.Export{ROAs: results}, "", "\t")
 		if err != nil {
 			log.Fatal().Err(err).Msg("json.Marshal()")
 		}
-		fmt.Println(string(output))
+		if viper.GetString("output") != "" {
+			if err := ioutil.WriteFile(viper.GetString("output"), output, 0644); err != nil {
+				log.Fatal().Err(err).Msg("ioutil.WriteFile()")
+			}
+		} else {
+			fmt.Println(string(output))
+		}
 	},
 }
 
@@ -147,5 +154,11 @@ func init() {
 	mergeCmd.Flags().StringP("rpki", "r", "", "url to fetch containing RPKI ROA data")
 	if err := viper.BindPFlag("rpki", mergeCmd.Flags().Lookup("rpki")); err != nil {
 		log.Fatal().Err(err).Msg("viper.BindPFlag(): rpki")
+	}
+
+	// output to file instead of stdout
+	mergeCmd.Flags().StringP("output", "o", "", "write to file instead of stdout")
+	if err := viper.BindPFlag("output", mergeCmd.Flags().Lookup("output")); err != nil {
+		log.Fatal().Err(err).Msg("viper.BindPFlag(): output")
 	}
 }
